@@ -1,0 +1,6 @@
+name: bloc_helpers
+version: 0.0.1
+
+dependencies:
+  rxdart: ^0.17.0
+  meta: ^1.1.0
