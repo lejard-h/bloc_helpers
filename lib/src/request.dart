@@ -4,6 +4,8 @@ import 'package:meta/meta.dart';
 import 'bloc.dart';
 
 abstract class RequestBloc<Request, Response> implements Bloc {
+  var _markerKey = new Object();
+
   final _requestPublisher = new PublishSubject<Request>();
 
   final _responsePublisher = new PublishSubject<Response>();
@@ -15,17 +17,19 @@ abstract class RequestBloc<Request, Response> implements Bloc {
   }
 
   Future<void> _handleRequest(Request input) async {
-    if (_loadingBehavior.value) return;
-
     _loadingBehavior.add(true);
 
     try {
-      _responsePublisher.add(await request(input));
+      final key = _markerKey = new Object();
+      final res = await request(input);
+
+      if (key != _markerKey) return;
+
+      _responsePublisher.add(res);
     } catch (e, s) {
       _responsePublisher.addError(e, s);
-    } finally {
-      _loadingBehavior.add(false);
     }
+    _loadingBehavior.add(false);
   }
 
   @mustCallSuper
