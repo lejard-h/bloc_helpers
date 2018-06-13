@@ -39,7 +39,6 @@ class SelectorBloc<T> implements Bloc {
 
   @override
   void dispose() {
-    _selectedBehavior.close();
     _selectPublisher.close();
     _unselectPublisher.close();
     _unselectAllPublisher.close();

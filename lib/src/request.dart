@@ -76,8 +76,6 @@ abstract class CachedRequestBloc<Request, Response>
   @override
   @mustCallSuper
   void dispose() {
-    _cachedRequestBehavior.close();
-    _cachedResponseBehavior.close();
     _invalidatePublisher.close();
     super.dispose();
   }
