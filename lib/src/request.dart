@@ -3,8 +3,11 @@ import 'package:rxdart/rxdart.dart';
 import 'package:meta/meta.dart';
 import 'bloc.dart';
 
-abstract class RequestBloc<Request, Response> implements Bloc {
+typedef Future<Response> RequestHandler<Request, Response>(Request input);
+
+class RequestBloc<Request, Response> implements Bloc {
   var _markerKey = new Object();
+  final RequestHandler _request;
 
   final _requestPublisher = new PublishSubject<Request>();
 
@@ -12,7 +15,7 @@ abstract class RequestBloc<Request, Response> implements Bloc {
 
   final _loadingBehavior = new BehaviorSubject<bool>(seedValue: false);
 
-  RequestBloc() {
+  RequestBloc(this._request) {
     _requestPublisher.stream.listen(_handleRequest);
   }
 
@@ -21,7 +24,7 @@ abstract class RequestBloc<Request, Response> implements Bloc {
 
     try {
       final key = _markerKey = new Object();
-      final res = await request(input);
+      final res = await _request(input);
 
       if (key != _markerKey) return;
 
@@ -35,8 +38,6 @@ abstract class RequestBloc<Request, Response> implements Bloc {
   @mustCallSuper
   void dispose() {
     _requestPublisher.close();
-    _responsePublisher.close();
-    _loadingBehavior.close();
   }
 
   Sink<Request> get requestSink => _requestPublisher.sink;
@@ -44,17 +45,15 @@ abstract class RequestBloc<Request, Response> implements Bloc {
   Stream<bool> get onLoading => _loadingBehavior.stream;
 
   Stream<Response> get onResponse => _responsePublisher.stream;
-
-  Future<Response> request(Request input);
 }
 
-abstract class CachedRequestBloc<Request, Response>
+class CachedRequestBloc<Request, Response>
     extends RequestBloc<Request, Response> {
   final _cachedResponseBehavior = new BehaviorSubject<Response>();
   final _cachedRequestBehavior = new BehaviorSubject<Request>();
   final _invalidatePublisher = new PublishSubject<void>();
 
-  CachedRequestBloc() : super() {
+  CachedRequestBloc(RequestHandler request) : super(request) {
     _responsePublisher.stream.listen(_onResponse, onError: _onError);
     _invalidatePublisher.stream.listen((_) {
       _cachedRequestBehavior.add(null);
