@@ -5,7 +5,7 @@ import 'bloc.dart';
 
 typedef Future<Response> RequestHandler<Request, Response>(Request input);
 
-abstract class RequestBloc<Request, Response> implements Bloc {
+abstract class RequestBloc<Request, Response> extends Bloc {
   var _markerKey = new Object();
 
   final _requestPublisher = new PublishSubject<Request>();
@@ -35,8 +35,11 @@ abstract class RequestBloc<Request, Response> implements Bloc {
   }
 
   @mustCallSuper
+  @override
   void dispose() {
     _requestPublisher.close();
+
+    super.dispose();
   }
 
   Sink<Request> get requestSink => _requestPublisher.sink;

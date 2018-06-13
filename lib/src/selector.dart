@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 import 'bloc.dart';
 
-class SelectorBloc<T> implements Bloc {
+class SelectorBloc<T> extends Bloc {
   final bool unique;
 
   final _selectedBehavior = new BehaviorSubject<List<T>>();
@@ -43,6 +43,8 @@ class SelectorBloc<T> implements Bloc {
     _unselectPublisher.close();
     _unselectAllPublisher.close();
     _selectAllPublisher.close();
+
+    super.dispose();
   }
 
   Stream<List<T>> get selected => _selectedBehavior;

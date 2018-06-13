@@ -1,5 +1,9 @@
 name: bloc_helpers
+description: Set of helpers class and function to implements Bloc pattern
 version: 0.0.1
+
+environment:
+  sdk: '>=1.23.0 <2.0.0'
 
 dependencies:
   rxdart: ^0.17.0
