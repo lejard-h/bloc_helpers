@@ -33,7 +33,7 @@ class SelectorBloc<T> extends Bloc {
 
   void _remove(List<T> values) {
     _selectedBehavior.add(
-      _selectedBehavior.value.where((v) => !values.contains(v)),
+      _selectedBehavior.value.where((v) => !values.contains(v)).toList(),
     );
   }
 
@@ -64,4 +64,6 @@ class SelectorBloc<T> extends Bloc {
   Sink<List<T>> get selectAllSink => _selectAllPublisher.sink;
 
   Sink<void> get unselectAllSink => _unselectAllPublisher.sink;
+
+  Sink<List<T>> get loadSink => _selectedBehavior.sink;
 }

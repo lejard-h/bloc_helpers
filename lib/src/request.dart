@@ -65,22 +65,28 @@ class _RequestBloc<Request, Response> extends RequestBloc<Request, Response> {
 
 abstract class CachedRequestBloc<Request, Response>
     extends RequestBloc<Request, Response> {
-  final _cachedResponseBehavior = new BehaviorSubject<Response>();
+  var _cached = false;
+  final _cachedResponseBehavior;
   final _cachedRequestBehavior = new BehaviorSubject<Request>();
-  final _invalidatePublisher = new PublishSubject<void>();
+  final _invalidatePublisher = new PublishSubject<Response>();
+  final _updatePublisher = new PublishSubject<Response>();
 
-  CachedRequestBloc() : super() {
+  CachedRequestBloc({Response seedValue})
+      : _cachedResponseBehavior =
+            new BehaviorSubject<Response>(seedValue: seedValue),
+        super() {
     _responsePublisher.stream.listen(_onResponse, onError: _onError);
-    _invalidatePublisher.stream.listen((_) {
-      _cachedRequestBehavior.add(null);
-      _cachedResponseBehavior.add(null);
+    _invalidatePublisher.stream.listen((value) {
+      _cached = false;
+      _cachedResponseBehavior.add(value ?? seedValue);
     });
+
+    _updatePublisher.stream.listen(_cachedResponseBehavior.add);
   }
 
   @override
   Future<void> _handleRequest(Request input) async {
-    if (_cachedRequestBehavior.value == input &&
-        _cachedResponseBehavior.value != null) {
+    if (_cachedRequestBehavior.value == input && _cached) {
       _responsePublisher.add(_cachedResponseBehavior.value);
       return;
     }
@@ -90,7 +96,10 @@ abstract class CachedRequestBloc<Request, Response>
 
   void _onError(_) => _cachedResponseBehavior.add(null);
 
-  void _onResponse(Response response) => _cachedResponseBehavior.add(response);
+  void _onResponse(Response response) {
+    _cached = true;
+    _cachedResponseBehavior.add(response);
+  }
 
   @override
   @mustCallSuper
@@ -106,7 +115,9 @@ abstract class CachedRequestBloc<Request, Response>
 
   Stream<Request> get cachedRequest => _cachedRequestBehavior.stream;
 
-  Sink<void> get invalidateCacheSink => _invalidatePublisher.sink;
+  Sink<Response> get invalidateCacheSink => _invalidatePublisher.sink;
+
+  Sink<Response> get updateCachedResponseSink => _updatePublisher.sink;
 }
 
 class _CachedRequestBloc<Request, Response>
