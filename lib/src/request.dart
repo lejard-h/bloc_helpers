@@ -3,11 +3,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:meta/meta.dart';
 import 'bloc.dart';
 
-typedef Future<Response> RequestHandler<Request, Response>(Request input);
-
-class RequestBloc<Request, Response> implements Bloc {
+abstract class RequestBloc<Request, Response> implements Bloc {
   var _markerKey = new Object();
-  final RequestHandler _request;
 
   final _requestPublisher = new PublishSubject<Request>();
 
@@ -15,7 +12,7 @@ class RequestBloc<Request, Response> implements Bloc {
 
   final _loadingBehavior = new BehaviorSubject<bool>(seedValue: false);
 
-  RequestBloc(this._request) {
+  RequestBloc() {
     _requestPublisher.stream.listen(_handleRequest);
   }
 
@@ -24,7 +21,7 @@ class RequestBloc<Request, Response> implements Bloc {
 
     try {
       final key = _markerKey = new Object();
-      final res = await _request(input);
+      final res = await request(input);
 
       if (key != _markerKey) return;
 
@@ -45,15 +42,17 @@ class RequestBloc<Request, Response> implements Bloc {
   Stream<bool> get onLoading => _loadingBehavior.stream;
 
   Stream<Response> get onResponse => _responsePublisher.stream;
+
+  Future<Response> request(Request input);
 }
 
-class CachedRequestBloc<Request, Response>
+abstract class CachedRequestBloc<Request, Response>
     extends RequestBloc<Request, Response> {
   final _cachedResponseBehavior = new BehaviorSubject<Response>();
   final _cachedRequestBehavior = new BehaviorSubject<Request>();
   final _invalidatePublisher = new PublishSubject<void>();
 
-  CachedRequestBloc(RequestHandler request) : super(request) {
+  CachedRequestBloc() : super() {
     _responsePublisher.stream.listen(_onResponse, onError: _onError);
     _invalidatePublisher.stream.listen((_) {
       _cachedRequestBehavior.add(null);
