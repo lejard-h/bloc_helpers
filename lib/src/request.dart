@@ -3,6 +3,8 @@ import 'package:rxdart/rxdart.dart';
 import 'package:meta/meta.dart';
 import 'bloc.dart';
 
+typedef Future<Response> RequestHandler<Request, Response>(Request input);
+
 abstract class RequestBloc<Request, Response> implements Bloc {
   var _markerKey = new Object();
 
@@ -43,7 +45,19 @@ abstract class RequestBloc<Request, Response> implements Bloc {
 
   Stream<Response> get onResponse => _responsePublisher.stream;
 
+  factory RequestBloc.func(RequestHandler<Request, Response> handler) =>
+      new _RequestBloc<Request, Response>(handler);
+
   Future<Response> request(Request input);
+}
+
+class _RequestBloc<Request, Response> extends RequestBloc<Request, Response> {
+  final RequestHandler<Request, Response> _request;
+
+  _RequestBloc(this._request) : super();
+
+  @override
+  Future<Response> request(Request input) => _request(input);
 }
 
 abstract class CachedRequestBloc<Request, Response>
@@ -82,9 +96,22 @@ abstract class CachedRequestBloc<Request, Response>
     super.dispose();
   }
 
+  factory CachedRequestBloc.func(RequestHandler<Request, Response> handler) =>
+      new _CachedRequestBloc<Request, Response>(handler);
+
   Stream<Response> get cachedResponse => _cachedResponseBehavior.stream;
 
   Stream<Request> get cachedRequest => _cachedRequestBehavior.stream;
 
   Sink<void> get invalidateCacheSink => _invalidatePublisher.sink;
+}
+
+class _CachedRequestBloc<Request, Response>
+    extends CachedRequestBloc<Request, Response> {
+  final RequestHandler<Request, Response> _request;
+
+  _CachedRequestBloc(this._request) : super();
+
+  @override
+  Future<Response> request(Request input) => _request(input);
 }
