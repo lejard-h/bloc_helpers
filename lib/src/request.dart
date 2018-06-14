@@ -10,8 +10,10 @@ abstract class RequestBloc<Request, Response> extends Bloc {
 
   final _requestPublisher = new PublishSubject<Request>();
 
+  // ignore: close_sinks
   final _responsePublisher = new PublishSubject<Response>();
 
+  // ignore: close_sinks
   final _loadingBehavior = new BehaviorSubject<bool>(seedValue: false);
 
   RequestBloc() {
@@ -66,7 +68,11 @@ class _RequestBloc<Request, Response> extends RequestBloc<Request, Response> {
 abstract class CachedRequestBloc<Request, Response>
     extends RequestBloc<Request, Response> {
   var _cached = false;
-  final _cachedResponseBehavior;
+
+  // ignore: close_sinks
+  final BehaviorSubject<Response> _cachedResponseBehavior;
+
+  // ignore: close_sinks
   final _cachedRequestBehavior = new BehaviorSubject<Request>();
   final _invalidatePublisher = new PublishSubject<Response>();
   final _updatePublisher = new PublishSubject<Response>();
