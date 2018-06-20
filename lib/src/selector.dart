@@ -41,10 +41,10 @@ class SelectorBloc<T> extends Bloc {
   final _unselectAllPublisher = new PublishSubject<void>();
 
   SelectorBloc({this.unique: true, Iterable<T> seedValue: const <T>[]})
-      : _selectedBehavior = unique
-            ? new BehaviorSubject<Set<T>>(seedValue: new Set<T>.from(seedValue))
-            : new BehaviorSubject<List<T>>(
-                seedValue: new List<T>.from(seedValue)) {
+      : _selectedBehavior = new BehaviorSubject<Iterable<T>>(
+            seedValue: unique
+                ? new Set<T>.from(seedValue)
+                : new List<T>.from(seedValue)) {
     onSelect.listen((v) => _add([v]));
     onSelectAll.listen(_add);
 
@@ -52,16 +52,28 @@ class SelectorBloc<T> extends Bloc {
     onUnselectAll.listen((_) => _remove(_selectedBehavior.value));
   }
 
-  void _add(List<T> values) {
-    _selectedBehavior.add(
-      _selectedBehavior.value.toList()..addAll(values),
-    );
+  void _add(Iterable<T> values) {
+    if (unique) {
+      _selectedBehavior.add(
+        _selectedBehavior.value.toSet()..addAll(values),
+      );
+    } else {
+      _selectedBehavior.add(
+        _selectedBehavior.value.toList()..addAll(values),
+      );
+    }
   }
 
-  void _remove(List<T> values) {
-    _selectedBehavior.add(
-      _selectedBehavior.value.where((v) => !values.contains(v)).toList(),
-    );
+  void _remove(Iterable<T> values) {
+    if (unique) {
+      _selectedBehavior.add(
+        _selectedBehavior.value.where((v) => !values.contains(v)).toSet(),
+      );
+    } else {
+      _selectedBehavior.add(
+        _selectedBehavior.value.where((v) => !values.contains(v)).toList(),
+      );
+    }
   }
 
   @override
