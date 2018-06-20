@@ -40,7 +40,7 @@ class SelectorBloc<T> extends Bloc {
   final _unselectPublisher = new PublishSubject<T>();
   final _unselectAllPublisher = new PublishSubject<void>();
 
-  SelectorBloc({this.unique: true, Iterable<T> seedValue: const <T>[]})
+  SelectorBloc({this.unique: true, Iterable<T> seedValue: const []})
       : _selectedBehavior = new BehaviorSubject<Iterable<T>>(
             seedValue: unique
                 ? new Set<T>.from(seedValue)
