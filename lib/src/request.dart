@@ -5,6 +5,8 @@ import 'bloc.dart';
 
 typedef Future<Response> RequestHandler<Request, Response>(Request input);
 
+/// Helper class to implement asynchronous call to a server
+/// Need to implement the [request] method
 abstract class RequestBloc<Request, Response> extends Bloc {
   var _markerKey = new Object();
 
@@ -44,27 +46,45 @@ abstract class RequestBloc<Request, Response> extends Bloc {
     super.dispose();
   }
 
+  /// Sink to trigger the request
+  /// the response and errors are push in the [onResponse] stream
   Sink<Request> get requestSink => _requestPublisher.sink;
 
+  /// Stream representing the current state of the bloc
+  /// true if a request is ongoing
   Stream<bool> get onLoading => _loadingBehavior.stream;
 
+  /// Response stream
   Stream<Response> get onResponse => _responsePublisher.stream;
 
+  /// Create a Request Bloc by passing the request function
+  /// 
+  /// ```dart
+  /// final requestBloc = new RequestBloc<String,int>.func(myRequest);
+  /// 
+  /// Future<int> myRequest(String input) async {
+  ///   ...
+  /// }
+  /// ```
   factory RequestBloc.func(RequestHandler<Request, Response> handler) =>
       new _RequestBloc<Request, Response>(handler);
 
   Future<Response> request(Request input);
 }
 
-class _RequestBloc<Request, Response> extends RequestBloc<Request, Response> {
-  final RequestHandler<Request, Response> _request;
-
-  _RequestBloc(this._request) : super();
-
-  @override
-  Future<Response> request(Request input) => _request(input);
-}
-
+/// Helper class to implement asynchronous call to a server
+/// Need to implement the [request] method
+/// The response is cached to avoid multiple request to a server for exemple
+/// 
+/// ```dart
+/// cachedRequestBloc.requestSink.add('foo'); /// will call [request]
+/// cachedRequestBloc.onResponse.first; /// response 'a'
+/// 
+/// cachedRequestBloc.requestSink.add('foo'); /// same input, won't call [request]
+/// cachedRequestBloc.onResponse.first; /// response 'a'
+/// ```
+/// 
+/// If the request input change it will invalidate the cache and call [request]
 abstract class CachedRequestBloc<Request, Response>
     extends RequestBloc<Request, Response> {
   var _cached = false;
@@ -77,6 +97,7 @@ abstract class CachedRequestBloc<Request, Response>
   final _invalidatePublisher = new PublishSubject<Response>();
   final _updatePublisher = new PublishSubject<Response>();
 
+  /// [seedValue] will init the value of the [cachedResponse]
   CachedRequestBloc({Response seedValue})
       : _cachedResponseBehavior =
             new BehaviorSubject<Response>(seedValue: seedValue),
@@ -84,6 +105,7 @@ abstract class CachedRequestBloc<Request, Response>
     _responsePublisher.stream.listen(_onResponse, onError: _onError);
     _invalidatePublisher.stream.listen((value) {
       _cached = false;
+      _cachedRequestBehavior.add(null);
       _cachedResponseBehavior.add(value ?? seedValue);
     });
 
@@ -114,15 +136,27 @@ abstract class CachedRequestBloc<Request, Response>
     super.dispose();
   }
 
+  /// Create a Cached Request Bloc by passing the request function
+  /// 
+  /// ```dart
+  /// final requestBloc = new RequestBloc<String,int>.func(myRequest);
+  /// 
+  /// Future<int> myRequest(String input) async {
+  ///   ...
+  /// }
+  /// ```
   factory CachedRequestBloc.func(RequestHandler<Request, Response> handler) =>
       new _CachedRequestBloc<Request, Response>(handler);
 
+  /// cached response stream
+  /// Use a Behavior subject so will emit the last value at each `listen`
   Stream<Response> get cachedResponse => _cachedResponseBehavior.stream;
 
-  Stream<Request> get cachedRequest => _cachedRequestBehavior.stream;
-
+  /// Sink to invalidate the cache
+  /// Can take a value if you want to put back the seedValue of the cachedResponse
   Sink<Response> get invalidateCacheSink => _invalidatePublisher.sink;
 
+  /// Sink to manualy update the cachedResponse
   Sink<Response> get updateCachedResponseSink => _updatePublisher.sink;
 }
 
@@ -131,6 +165,15 @@ class _CachedRequestBloc<Request, Response>
   final RequestHandler<Request, Response> _request;
 
   _CachedRequestBloc(this._request) : super();
+
+  @override
+  Future<Response> request(Request input) => _request(input);
+}
+
+class _RequestBloc<Request, Response> extends RequestBloc<Request, Response> {
+  final RequestHandler<Request, Response> _request;
+
+  _RequestBloc(this._request) : super();
 
   @override
   Future<Response> request(Request input) => _request(input);
