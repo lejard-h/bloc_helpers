@@ -52,7 +52,7 @@ abstract class RequestBloc<Request, Response> extends Bloc {
 
   /// Stream representing the current state of the bloc
   /// true if a request is ongoing
-  Stream<bool> get onLoading => _loadingBehavior.stream.distinct();
+  Stream<bool> get onLoading => _loadingBehavior.stream;
 
   /// Response stream
   Stream<Response> get onResponse => _responsePublisher.stream;
@@ -150,8 +150,7 @@ abstract class CachedRequestBloc<Request, Response>
 
   /// cached response stream
   /// Use a Behavior subject so will emit the last value at each `listen`
-  Stream<Response> get cachedResponse =>
-      _cachedResponseBehavior.stream.distinct();
+  Stream<Response> get cachedResponse => _cachedResponseBehavior.stream;
 
   /// Sink to invalidate the cache
   /// Can take a value if you want to put back the seedValue of the cachedResponse
