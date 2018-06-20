@@ -52,16 +52,16 @@ abstract class RequestBloc<Request, Response> extends Bloc {
 
   /// Stream representing the current state of the bloc
   /// true if a request is ongoing
-  Stream<bool> get onLoading => _loadingBehavior.stream;
+  Stream<bool> get onLoading => _loadingBehavior.stream.distinct();
 
   /// Response stream
   Stream<Response> get onResponse => _responsePublisher.stream;
 
   /// Create a Request Bloc by passing the request function
-  /// 
+  ///
   /// ```dart
   /// final requestBloc = new RequestBloc<String,int>.func(myRequest);
-  /// 
+  ///
   /// Future<int> myRequest(String input) async {
   ///   ...
   /// }
@@ -75,15 +75,15 @@ abstract class RequestBloc<Request, Response> extends Bloc {
 /// Helper class to implement asynchronous call to a server
 /// Need to implement the [request] method
 /// The response is cached to avoid multiple request to a server for exemple
-/// 
+///
 /// ```dart
 /// cachedRequestBloc.requestSink.add('foo'); /// will call [request]
 /// cachedRequestBloc.onResponse.first; /// response 'a'
-/// 
+///
 /// cachedRequestBloc.requestSink.add('foo'); /// same input, won't call [request]
 /// cachedRequestBloc.onResponse.first; /// response 'a'
 /// ```
-/// 
+///
 /// If the request input change it will invalidate the cache and call [request]
 abstract class CachedRequestBloc<Request, Response>
     extends RequestBloc<Request, Response> {
@@ -122,7 +122,7 @@ abstract class CachedRequestBloc<Request, Response>
     super._handleRequest(input);
   }
 
-  void _onError(_) => _cachedResponseBehavior.add(null);
+  void _onError(e, s) => _cachedResponseBehavior.addError(e, s);
 
   void _onResponse(Response response) {
     _cached = true;
@@ -137,10 +137,10 @@ abstract class CachedRequestBloc<Request, Response>
   }
 
   /// Create a Cached Request Bloc by passing the request function
-  /// 
+  ///
   /// ```dart
   /// final requestBloc = new RequestBloc<String,int>.func(myRequest);
-  /// 
+  ///
   /// Future<int> myRequest(String input) async {
   ///   ...
   /// }
@@ -150,7 +150,8 @@ abstract class CachedRequestBloc<Request, Response>
 
   /// cached response stream
   /// Use a Behavior subject so will emit the last value at each `listen`
-  Stream<Response> get cachedResponse => _cachedResponseBehavior.stream;
+  Stream<Response> get cachedResponse =>
+      _cachedResponseBehavior.stream.distinct();
 
   /// Sink to invalidate the cache
   /// Can take a value if you want to put back the seedValue of the cachedResponse
