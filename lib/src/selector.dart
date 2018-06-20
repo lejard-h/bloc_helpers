@@ -6,7 +6,7 @@ import 'bloc.dart';
 class SelectorBloc<T> extends Bloc {
   final bool unique;
 
-  final _selectedBehavior = new BehaviorSubject<List<T>>();
+  final _selectedBehavior = new BehaviorSubject<List<T>>(seedValue: <T>[]);
 
   final _selectPublisher = new PublishSubject<T>();
   final _selectAllPublisher = new PublishSubject<List<T>>();
@@ -27,7 +27,8 @@ class SelectorBloc<T> extends Bloc {
         : values;
 
     _selectedBehavior.add(
-      _selectedBehavior.value.toList()..addAll(toAdd),
+      _selectedBehavior.value.toList()
+        ..addAll(toAdd),
     );
   }
 
