@@ -53,7 +53,7 @@ class SelectorBloc<T> extends Bloc {
   }
 
   void _add(Iterable<T> values) {
-    if (values == _selectedBehavior.value) return;
+    if (values == null || values == _selectedBehavior.value) return;
 
     if (unique) {
       _selectedBehavior.add(
@@ -67,6 +67,8 @@ class SelectorBloc<T> extends Bloc {
   }
 
   void _remove(Iterable<T> values) {
+    if (values == null) return;
+
     if (unique) {
       _selectedBehavior.add(
         _selectedBehavior.value.where((v) => !values.contains(v)).toSet(),
