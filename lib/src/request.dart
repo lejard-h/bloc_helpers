@@ -19,7 +19,7 @@ abstract class RequestBloc<Request, Response> extends Bloc {
   final _loadingBehavior = new BehaviorSubject<bool>(seedValue: false);
 
   RequestBloc() {
-    _requestPublisher.stream.listen(_handleRequest);
+    onRequest.listen(_handleRequest);
   }
 
   Future<void> _handleRequest(Request input) async {
@@ -53,6 +53,9 @@ abstract class RequestBloc<Request, Response> extends Bloc {
   /// Stream representing the current state of the bloc
   /// true if a request is ongoing
   Stream<bool> get onLoading => _loadingBehavior.stream;
+
+  /// Request stream
+  Stream<Request> get onRequest => _requestPublisher.stream;
 
   /// Response stream
   Stream<Response> get onResponse => _responsePublisher.stream;
@@ -102,7 +105,7 @@ abstract class CachedRequestBloc<Request, Response>
       : _cachedResponseBehavior =
             new BehaviorSubject<Response>(seedValue: seedValue),
         super() {
-    _responsePublisher.stream.listen(_onResponse, onError: _onError);
+    onResponse.listen(_onResponse, onError: _onError);
     _invalidatePublisher.stream.listen((value) {
       _cached = false;
       _cachedRequestBehavior.add(null);
