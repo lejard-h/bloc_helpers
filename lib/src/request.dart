@@ -98,7 +98,6 @@ abstract class CachedRequestBloc<Request, Response>
   // ignore: close_sinks
   final _cachedRequestBehavior = new BehaviorSubject<Request>();
   final _invalidatePublisher = new PublishSubject<Response>();
-  final _updatePublisher = new PublishSubject<Response>();
 
   /// [seedValue] will init the value of the [cachedResponse]
   CachedRequestBloc({Response seedValue})
@@ -111,8 +110,6 @@ abstract class CachedRequestBloc<Request, Response>
       _cachedRequestBehavior.add(null);
       _cachedResponseBehavior.add(value ?? seedValue);
     });
-
-    _updatePublisher.stream.listen(_cachedResponseBehavior.add);
   }
 
   @override
@@ -136,6 +133,7 @@ abstract class CachedRequestBloc<Request, Response>
   @mustCallSuper
   void dispose() {
     _invalidatePublisher.close();
+    _cachedResponseBehavior.close();
     super.dispose();
   }
 
@@ -160,7 +158,7 @@ abstract class CachedRequestBloc<Request, Response>
   Sink<Response> get invalidateCacheSink => _invalidatePublisher.sink;
 
   /// Sink to manualy update the cachedResponse
-  Sink<Response> get updateCachedResponseSink => _updatePublisher.sink;
+  Sink<Response> get updateCachedResponseSink => _cachedResponseBehavior.sink;
 }
 
 class _CachedRequestBloc<Request, Response>

@@ -1,3 +1,7 @@
+## 0.0.3
+
+- fix cached response sink
+
 ## 0.0.2
 
 - add onRequest stream
