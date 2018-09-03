@@ -1,3 +1,7 @@
+## 0.0.4
+
+- protected request method
+
 ## 0.0.3
 
 - fix cached response sink

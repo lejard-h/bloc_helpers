@@ -72,6 +72,7 @@ abstract class RequestBloc<Request, Response> extends Bloc {
   factory RequestBloc.func(RequestHandler<Request, Response> handler) =>
       new _RequestBloc<Request, Response>(handler);
 
+  @protected
   Future<Response> request(Request input);
 }
 
