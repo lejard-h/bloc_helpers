@@ -2,7 +2,7 @@ name: bloc_helpers
 description: Set of helpers class and function to implements Bloc pattern
 homepage: https://github.com/lejard-h/bloc_helpers
 author: Hadrien Lejard <hadrien.lejard@gmail.com>
-version: 0.0.4
+version: 0.0.5
 
 environment:
   sdk: '>=1.23.0 <3.0.0'

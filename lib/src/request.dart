@@ -109,6 +109,8 @@ abstract class CachedRequestBloc<Request, Response>
     _invalidatePublisher.stream.listen((value) {
       _cached = false;
       _cachedRequestBehavior.add(null);
+
+      if (disposed) return;
       _cachedResponseBehavior.add(value ?? seedValue);
     });
   }
@@ -127,6 +129,7 @@ abstract class CachedRequestBloc<Request, Response>
 
   void _onResponse(Response response) {
     _cached = true;
+    if (disposed) return;
     _cachedResponseBehavior.add(response);
   }
 
