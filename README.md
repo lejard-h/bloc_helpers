@@ -37,14 +37,19 @@ abstract class Bloc {
 RequestBloc help to implement async call, it provides following stream ans sink.
 
 `Sink<Request> requestSink`
+
 `Stream<bool> onLoading`
+
 `Stream<Request> onRequest`
+
 `Stream<Response> onResponse`
 
 CachedRequestBloc add the ability to cache response, to avoid multiple call when request does not change, it provides following stream and sink.
 
 `Stream<Response> cachedResponse`
+
 `Sink<Response> invalidateCacheSink`
+
 `Sink<Response> updateCachedResponseSink`
 
 #### Usage
