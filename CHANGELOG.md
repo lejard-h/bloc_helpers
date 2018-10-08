@@ -1,3 +1,7 @@
+## 0.0.5
+
+- cleanup abd better README
+
 ## 0.0.4
 
 - protected request method
