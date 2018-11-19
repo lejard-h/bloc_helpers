@@ -125,7 +125,10 @@ abstract class CachedRequestBloc<Request, Response>
     super._handleRequest(input);
   }
 
-  void _onError(e, s) => _cachedResponseBehavior.addError(e, s);
+  void _onError(e, s) {
+    if (disposed) return;
+    _cachedResponseBehavior.addError(e, s);
+  }
 
   void _onResponse(Response response) {
     _cached = true;

@@ -1,3 +1,7 @@
+## 0.0.6
+
+- addd disposed check before addError
+
 ## 0.0.5
 
 - cleanup abd better README
