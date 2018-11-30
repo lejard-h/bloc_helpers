@@ -40,8 +40,8 @@ abstract class RequestBloc<Request, Response> extends Bloc {
 
   @mustCallSuper
   @override
-  void dispose() {
-    _requestPublisher.close();
+  FutureOr<void> dispose() async {
+    await _requestPublisher.close();
 
     super.dispose();
   }
@@ -52,13 +52,13 @@ abstract class RequestBloc<Request, Response> extends Bloc {
 
   /// Stream representing the current state of the bloc
   /// true if a request is ongoing
-  Stream<bool> get onLoading => _loadingBehavior.stream;
+  ValueObservable<bool> get onLoading => _loadingBehavior.stream;
 
   /// Request stream
-  Stream<Request> get onRequest => _requestPublisher.stream;
+  Observable<Request> get onRequest => _requestPublisher.stream;
 
   /// Response stream
-  Stream<Response> get onResponse => _responsePublisher.stream;
+  Observable<Response> get onResponse => _responsePublisher.stream;
 
   /// Create a Request Bloc by passing the request function
   ///
@@ -138,9 +138,9 @@ abstract class CachedRequestBloc<Request, Response>
 
   @override
   @mustCallSuper
-  void dispose() {
-    _invalidatePublisher.close();
-    _cachedResponseBehavior.close();
+  FutureOr<void> dispose() async {
+    await _invalidatePublisher.close();
+    await _cachedResponseBehavior.close();
     super.dispose();
   }
 
@@ -158,7 +158,7 @@ abstract class CachedRequestBloc<Request, Response>
 
   /// cached response stream
   /// Use a Behavior subject so will emit the last value at each `listen`
-  Stream<Response> get cachedResponse => _cachedResponseBehavior.stream;
+  ValueObservable<Response> get cachedResponse => _cachedResponseBehavior.stream;
 
   /// Sink to invalidate the cache
   /// Can take a value if you want to put back the seedValue of the cachedResponse

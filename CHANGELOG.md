@@ -1,3 +1,9 @@
+## 0.1.0
+
+- Observable instead of Stream
+- use ValueObservable
+- dispose function is now async
+
 ## 0.0.6
 
 - addd disposed check before addError

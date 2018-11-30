@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:meta/meta.dart';
 
 /// Base of a Bloc pattern class
@@ -9,7 +11,7 @@ abstract class Bloc {
   bool get disposed => _disposed;
 
   @mustCallSuper
-  void dispose() {
+  FutureOr<void> dispose() async {
     _disposed = true;
   }
 }

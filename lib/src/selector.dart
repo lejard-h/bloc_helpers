@@ -81,30 +81,30 @@ class SelectorBloc<T> extends Bloc {
   }
 
   @override
-  void dispose() {
-    _selectPublisher.close();
-    _unselectPublisher.close();
-    _unselectAllPublisher.close();
-    _selectAllPublisher.close();
+  FutureOr<void> dispose() async {
+    await _selectPublisher.close();
+    await _unselectPublisher.close();
+    await _unselectAllPublisher.close();
+    await _selectAllPublisher.close();
 
     super.dispose();
   }
 
   /// Stream of selected item
   /// Emit the last value when listen
-  Stream<Iterable<T>> get selected => _selectedBehavior;
+  ValueObservable<Iterable<T>> get selected => _selectedBehavior.stream;
 
   /// Emit event when [selectSink.add]
-  Stream<T> get onSelect => _selectPublisher.stream;
+  Observable<T> get onSelect => _selectPublisher.stream;
 
   /// Emit event when [unselectSink.add]
-  Stream<T> get onUnselect => _unselectPublisher.stream;
+  Observable<T> get onUnselect => _unselectPublisher.stream;
 
   /// Emit event when [selectAllSink.add]
-  Stream<Iterable<T>> get onSelectAll => _selectAllPublisher.stream;
+  Observable<Iterable<T>> get onSelectAll => _selectAllPublisher.stream;
 
   /// Emit event when [unselectAllSink.add]t
-  Stream<void> get onUnselectAll => _unselectAllPublisher.stream;
+  Observable<void> get onUnselectAll => _unselectAllPublisher.stream;
 
   /// Sink to unselect an item
   Sink<T> get unselectSink => _unselectPublisher.sink;
