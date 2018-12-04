@@ -1,3 +1,7 @@
+## 0.1.1
+
+- fix selector
+
 ## 0.1.0
 
 - Observable instead of Stream

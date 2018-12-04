@@ -35,33 +35,39 @@ class SelectorBloc<T> extends Bloc {
 
   final BehaviorSubject<Iterable<T>> _selectedBehavior;
 
-  final _selectPublisher = new PublishSubject<T>();
-  final _selectAllPublisher = new PublishSubject<Iterable<T>>();
-  final _unselectPublisher = new PublishSubject<T>();
-  final _unselectAllPublisher = new PublishSubject<void>();
+  final _selectPublisher = PublishSubject<T>();
+  final _selectAllPublisher = PublishSubject<Iterable<T>>();
+  final _unselectPublisher = PublishSubject<T>();
+  final _unselectAllPublisher = PublishSubject<Iterable<T>>();
+  final _clearPublisher = PublishSubject<void>();
 
-  SelectorBloc({this.unique: true, Iterable<T> seedValue: const []})
-      : _selectedBehavior = new BehaviorSubject<Iterable<T>>(
-            seedValue: unique
-                ? new Set<T>.from(seedValue)
-                : new List<T>.from(seedValue)) {
+  SelectorBloc({this.unique: true, Iterable<T> seedValue})
+      : _selectedBehavior = BehaviorSubject<Iterable<T>>(seedValue: seedValue) {
+    _initListeners();
+  }
+
+  void _initListeners() {
     onSelect.listen((v) => _add([v]));
     onSelectAll.listen(_add);
 
     onUnselect.listen((v) => _remove([v]));
-    onUnselectAll.listen((_) => _remove(_selectedBehavior.value));
+    onUnselectAll.listen(_remove);
+
+    onClear.listen((_) => _remove(_selectedBehavior.value));
   }
 
   void _add(Iterable<T> values) {
     if (values == null || values == _selectedBehavior.value) return;
 
     if (unique) {
+      final current = _selectedBehavior.value?.toSet() ?? Set<T>();
       _selectedBehavior.add(
-        _selectedBehavior.value.toSet()..addAll(values),
+        current..addAll(values),
       );
     } else {
+      final current = _selectedBehavior.value?.toList() ?? List<T>();
       _selectedBehavior.add(
-        _selectedBehavior.value.toList()..addAll(values),
+        current..addAll(values),
       );
     }
   }
@@ -70,12 +76,14 @@ class SelectorBloc<T> extends Bloc {
     if (values == null) return;
 
     if (unique) {
+      final current = _selectedBehavior.value?.toSet() ?? Set<T>();
       _selectedBehavior.add(
-        _selectedBehavior.value.where((v) => !values.contains(v)).toSet(),
+        current.where((v) => !values.contains(v)).toSet(),
       );
     } else {
+      final current = _selectedBehavior.value?.toList() ?? List<T>();
       _selectedBehavior.add(
-        _selectedBehavior.value.where((v) => !values.contains(v)).toList(),
+        current.where((v) => !values.contains(v)).toList(),
       );
     }
   }
@@ -86,6 +94,7 @@ class SelectorBloc<T> extends Bloc {
     await _unselectPublisher.close();
     await _unselectAllPublisher.close();
     await _selectAllPublisher.close();
+    await _clearPublisher.close();
 
     super.dispose();
   }
@@ -104,7 +113,9 @@ class SelectorBloc<T> extends Bloc {
   Observable<Iterable<T>> get onSelectAll => _selectAllPublisher.stream;
 
   /// Emit event when [unselectAllSink.add]t
-  Observable<void> get onUnselectAll => _unselectAllPublisher.stream;
+  Observable<Iterable<T>> get onUnselectAll => _unselectAllPublisher.stream;
+
+  Observable<void> get onClear => _clearPublisher.stream;
 
   /// Sink to unselect an item
   Sink<T> get unselectSink => _unselectPublisher.sink;
@@ -116,8 +127,10 @@ class SelectorBloc<T> extends Bloc {
   Sink<Iterable<T>> get selectAllSink => _selectAllPublisher.sink;
 
   /// Sink to unselect every item in the list
-  Sink<void> get unselectAllSink => _unselectAllPublisher.sink;
+  Sink<Iterable<T>> get unselectAllSink => _unselectAllPublisher.sink;
 
   /// Sink to manually update the selected list
   Sink<Iterable<T>> get loadSink => _selectedBehavior.sink;
+
+  Sink<void> get clearSink => _clearPublisher.sink;
 }
