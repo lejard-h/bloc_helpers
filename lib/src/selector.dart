@@ -96,13 +96,13 @@ class SelectorBloc<T> extends Bloc {
   }
 
   @override
-  FutureOr<void> dispose() async {
+  Future<void> dispose() async {
     await _selectPublisher.close();
     await _unselectPublisher.close();
     await _unselectAllPublisher.close();
     await _selectAllPublisher.close();
     await _clearPublisher.close();
-    super.dispose();
+    await super.dispose();
   }
 
   /// Stream of selected item

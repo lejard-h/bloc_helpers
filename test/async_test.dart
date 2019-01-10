@@ -14,7 +14,7 @@ class CachedMockRequest extends CachedRequestBloc<String, int> {
   }
 
   @override
-  FutureOr<void> dispose() {
+  Future<void> dispose() {
     hitRequest.close();
     return super.dispose();
   }
