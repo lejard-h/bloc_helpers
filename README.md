@@ -11,6 +11,8 @@
 This package contain helper class and common Bloc Pattern
 
 - Bloc (base to implement Bloc pattern)
+- AsyncTaskBloc
+- AsyncCachedTaskBloc
 - RequestBloc
 - CachedRequestBloc
 - SelectorBloc
@@ -36,21 +38,21 @@ abstract class Bloc {
 
 RequestBloc help to implement async call, it provides following stream ans sink.
 
-`Sink<Request> requestSink`
+`Sink<Request> callSink`
 
-`Stream<bool> onLoading`
+`Stream<bool> onRunning`
 
-`Stream<Request> onRequest`
+`Stream<Request> onCall`
 
-`Stream<Response> onResponse`
+`Stream<Response> onResult`
 
 CachedRequestBloc add the ability to cache response, to avoid multiple call when request does not change, it provides following stream and sink.
 
-`Stream<Response> cachedResponse`
+`Stream<Response> cachedResult`
 
 `Sink<Response> invalidateCacheSink`
 
-`Sink<Response> updateCachedResponseSink`
+`Sink<Response> updateCachedResultSink`
 
 #### Usage
 
@@ -67,7 +69,7 @@ class MyRequestBloc extends RequestBloc<MyRequest, MyResponse> {
   }
 }
 
-bloc.requestSink.add(MyRequest());
+bloc.callSink.add(MyRequest());
 ```
 
 See [example](https://github.com/lejard-h/bloc_helpers/tree/master/example/request.dart)

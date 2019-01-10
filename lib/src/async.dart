@@ -20,7 +20,7 @@ abstract class AsyncTaskBloc<Parameter, Result> extends Bloc {
   final _runningBehavior = new BehaviorSubject<bool>(seedValue: false);
 
   AsyncTaskBloc() {
-    onStart.listen(_handleTask);
+    onCall.listen(_handleTask);
   }
 
   Future<void> _handleTask(Parameter input) async {
@@ -52,7 +52,7 @@ abstract class AsyncTaskBloc<Parameter, Result> extends Bloc {
   ValueObservable<bool> get onRunning => _runningBehavior.stream;
 
   /// Task will start stream
-  Observable<Parameter> get onStart => _callPublisher.stream;
+  Observable<Parameter> get onCall => _callPublisher.stream;
 
   /// Result stream
   Observable<Result> get onResult => _resultPublisher.stream;
@@ -111,7 +111,7 @@ abstract class AsyncCachedTaskBloc<Parameter, Result>
       : _cachedResultBehavior =
             new BehaviorSubject<Result>(seedValue: seedValue),
         super() {
-    onResult.listen(_onResponse, onError: _onError);
+    onResult.listen(_onResult, onError: _onError);
     _invalidatePublisher.stream.listen((value) {
       _cached = false;
       _cachedParameterBehavior.add(null);
@@ -136,7 +136,7 @@ abstract class AsyncCachedTaskBloc<Parameter, Result>
     _cachedResultBehavior.addError(e, s);
   }
 
-  void _onResponse(Result response) {
+  void _onResult(Result response) {
     _cached = true;
     if (disposed) return;
     _cachedResultBehavior.add(response);

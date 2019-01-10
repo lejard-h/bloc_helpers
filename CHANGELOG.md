@@ -11,7 +11,7 @@
     + `requestSink` renamed to `callSink`
     + `onLoading` renamed to `onRunning`
     + `onRequest` renamed to `onResult`
-    + `onRequest` renamed to `onStart`
+    + `onRequest` renamed to `onCall`
     + `cachedResponse` renamed to `cachedResult`
     + `updateCachedResponseSink` to `updateCachedResultSink`
 

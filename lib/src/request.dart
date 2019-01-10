@@ -28,7 +28,7 @@ abstract class RequestBloc<Request, Response>
       new _RequestBloc<Request, Response>(handler);
 
   /// Sink to trigger the request
-  /// the response and errors are push in the [onResponse] stream
+  /// the response and errors are push in the [onResult] stream
   @Deprecated('Use callSink')
   Sink<Request> get requestSink => callSink;
 
@@ -38,12 +38,12 @@ abstract class RequestBloc<Request, Response>
   ValueObservable<bool> get onLoading => onRunning;
 
   /// Request stream
-  @Deprecated('Use onStart')
-  Observable<Request> get onRequest => onStart;
+  @Deprecated('Use onCall')
+  Observable<Request> get onRequest => onCall;
 
   /// Response stream
   @Deprecated('Use onResult')
-  Observable<Response> get onResponse => onResult;
+  Observable<Response> get onResult => onResult;
 
   @protected
   Future<Response> request(Request input);
@@ -78,10 +78,10 @@ abstract class RequestBloc<Request, Response>
 ///
 /// ```dart
 /// cachedRequestBloc.requestSink.add('foo'); /// will call [request]
-/// cachedRequestBloc.onResponse.first; /// response 'a'
+/// cachedRequestBloc.onResult.first; /// response 'a'
 ///
 /// cachedRequestBloc.requestSink.add('foo'); /// same input, won't call [request]
-/// cachedRequestBloc.onResponse.first; /// response 'a'
+/// cachedRequestBloc.onResult.first; /// response 'a'
 /// ```
 ///
 /// If the request input change it will invalidate the cache and call [request]
@@ -103,7 +103,7 @@ abstract class CachedRequestBloc<Request, Response>
       new _CachedRequestBloc<Request, Response>(handler);
 
   /// Sink to trigger the request
-  /// the response and errors are push in the [onResponse] stream
+  /// the response and errors are push in the [onResult] stream
   @Deprecated('Use callSink')
   Sink<Request> get requestSink => callSink;
 
@@ -113,12 +113,12 @@ abstract class CachedRequestBloc<Request, Response>
   ValueObservable<bool> get onLoading => onRunning;
 
   /// Request stream
-  @Deprecated('Use onStart')
-  Observable<Request> get onRequest => onStart;
+  @Deprecated('Use onCall')
+  Observable<Request> get onRequest => onCall;
 
   /// Response stream
   @Deprecated('Use onResult')
-  Observable<Response> get onResponse => onResult;
+  Observable<Response> get onResult => onResult;
 
   /// cached response stream
   /// Use a Behavior subject so will emit the last value at each `listen`
