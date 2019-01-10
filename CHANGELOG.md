@@ -1,3 +1,20 @@
+## 0.2.0
+
+- ***Breaking Change***
+    use contructor for unique selector
+        SelectorBloc(); // not unique
+        SelectorBloc.unique();
+
+- `AsyncTaskBloc` and `AsyncCachedTaskBloc`
+
+- ***Deprecated***
+    + `requestSink` renamed to `callSink`
+    + `onLoading` renamed to `onRunning`
+    + `onRequest` renamed to `onResult`
+    + `onRequest` renamed to `onCall`
+    + `cachedResponse` renamed to `cachedResult`
+    + `updateCachedResponseSink` to `updateCachedResultSink`
+
 ## 0.1.1
 
 - fix selector

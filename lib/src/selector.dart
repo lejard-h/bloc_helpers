@@ -41,8 +41,15 @@ class SelectorBloc<T> extends Bloc {
   final _unselectAllPublisher = PublishSubject<Iterable<T>>();
   final _clearPublisher = PublishSubject<void>();
 
-  SelectorBloc({this.unique: true, Iterable<T> seedValue})
-      : _selectedBehavior = BehaviorSubject<Iterable<T>>(seedValue: seedValue) {
+  SelectorBloc({List<T> seedValue})
+      : unique = false,
+        _selectedBehavior = BehaviorSubject<List<T>>(seedValue: seedValue) {
+    _initListeners();
+  }
+
+  SelectorBloc.unique({Set<T> seedValue})
+      : unique = true,
+        _selectedBehavior = BehaviorSubject<Set<T>>(seedValue: seedValue) {
     _initListeners();
   }
 
@@ -89,14 +96,13 @@ class SelectorBloc<T> extends Bloc {
   }
 
   @override
-  FutureOr<void> dispose() async {
+  Future<void> dispose() async {
     await _selectPublisher.close();
     await _unselectPublisher.close();
     await _unselectAllPublisher.close();
     await _selectAllPublisher.close();
     await _clearPublisher.close();
-
-    super.dispose();
+    await super.dispose();
   }
 
   /// Stream of selected item

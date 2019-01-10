@@ -19,12 +19,12 @@ class MyRequest {}
 main() {
   final bloc = MyRequestBloc();
 
-  bloc.onLoading.listen((loading) => print('loading $loading'));
+  bloc.onRunning.listen((loading) => print('loading $loading'));
 
-  bloc.onResponse.listen(
+  bloc.onResult.listen(
     (response) => print(response),
     onError: (error) => print(error),
   );
 
-  bloc.requestSink.add(MyRequest());
+  bloc.callSink.add(MyRequest());
 }
