@@ -68,7 +68,7 @@ void main() {
       });
 
       await expectLater(
-          bloc.onRunning,
+          bloc.running,
           emitsInOrder(<dynamic>[
             false,
             true,
@@ -85,7 +85,7 @@ void main() {
       });
 
       await expectLater(
-          bloc.onRunning,
+          bloc.running,
           emitsInOrder(<dynamic>[
             false,
             true,
@@ -143,7 +143,7 @@ void main() {
       });
 
       await expectLater(
-          bloc.onRunning,
+          bloc.running,
           emitsInOrder(<dynamic>[
             false,
             true,

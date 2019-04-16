@@ -40,7 +40,7 @@ RequestBloc help to implement async call, it provides following stream ans sink.
 
 `Sink<Request> callSink`
 
-`Stream<bool> onRunning`
+`Stream<bool> running`
 
 `Stream<Request> onCall`
 

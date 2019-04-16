@@ -19,7 +19,7 @@ class MyRequest {}
 main() {
   final bloc = MyRequestBloc();
 
-  bloc.onRunning.listen((loading) => print('loading $loading'));
+  bloc.running.listen((loading) => print('loading $loading'));
 
   bloc.onResult.listen(
     (response) => print(response),

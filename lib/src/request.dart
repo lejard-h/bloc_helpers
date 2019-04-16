@@ -27,8 +27,8 @@ mixin _RequestMixin<Request, Response> on AsyncTaskBloc<Request, Response> {
 
   /// Stream representing the current state of the bloc
   /// true if a request is ongoing
-  @Deprecated('Use onRunning')
-  ValueObservable<bool> get onLoading => onRunning;
+  @Deprecated('Use running')
+  ValueObservable<bool> get onLoading => running;
 
   /// Request stream
   @Deprecated('Use onCall')

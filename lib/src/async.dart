@@ -23,7 +23,7 @@ mixin _AsyncMixin<Parameter, Result> {
 
   /// Stream representing the current state of the bloc
   /// true if task is ongoing
-  ValueObservable<bool> get onRunning => _runningBehavior.stream;
+  ValueObservable<bool> get running => _runningBehavior.stream;
 
   /// Task will start stream
   Observable<Parameter> get onCall => _callPublisher.stream;
