@@ -43,13 +43,15 @@ class SelectorBloc<T> extends Bloc {
 
   SelectorBloc({List<T> seedValue})
       : unique = false,
-        _selectedBehavior = BehaviorSubject<List<T>>.seeded(seedValue) {
+        _selectedBehavior =
+            BehaviorSubject<List<T>>.seeded(seedValue ?? <T>[]) {
     _initListeners();
   }
 
   SelectorBloc.unique({Set<T> seedValue})
       : unique = true,
-        _selectedBehavior = BehaviorSubject<Set<T>>.seeded(seedValue) {
+        _selectedBehavior =
+            BehaviorSubject<Set<T>>.seeded(seedValue ?? Set<T>()) {
     _initListeners();
   }
 

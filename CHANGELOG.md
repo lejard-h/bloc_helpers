@@ -2,6 +2,7 @@
 
 - update RxDart to `0.21.0`;
 - rename `onRunning` to `running`
+- add seeded constructor
 
 ## 0.2.0
 

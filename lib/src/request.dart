@@ -93,8 +93,10 @@ abstract class RequestBloc<Request, Response>
 abstract class CachedRequestBloc<Request, Response>
     extends AsyncCachedTaskBloc<Request, Response>
     with _RequestMixin<Request, Response> {
-  /// [seedValue] will init the value of the [cachedResult]
-  CachedRequestBloc({Response seedValue}) : super(seedValue: seedValue);
+  CachedRequestBloc() : super();
+
+   /// [seedValue] will init the value of the [cachedResult]
+  CachedRequestBloc.seeded(Response seedValue) : super.seeded(seedValue);
 
   /// Create a Cached Request Bloc by passing the request function
   ///

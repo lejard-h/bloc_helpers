@@ -154,10 +154,20 @@ class _AsyncBloc<Parameter, Result> extends AsyncTaskBloc<Parameter, Result> {
 abstract class AsyncCachedTaskBloc<Parameter, Result>
     extends AsyncTaskBloc<Parameter, Result>
     with _CachedAsyncMixin<Parameter, Result> {
+  AsyncCachedTaskBloc()
+      : _cachedResultBehavior = BehaviorSubject<Result>(),
+        super() {
+    _init(null);
+  }
+
   /// [seedValue] will init the value of the [cachedResult]
-  AsyncCachedTaskBloc({Result seedValue})
+  AsyncCachedTaskBloc.seeded(Result seedValue)
       : _cachedResultBehavior = BehaviorSubject<Result>.seeded(seedValue),
         super() {
+    _init(seedValue);
+  }
+
+  void _init(Result seedValue) {
     onResult.listen(_onResult, onError: _onError);
     _invalidatePublisher.stream.listen((value) {
       _cached = false;
