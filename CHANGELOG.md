@@ -1,3 +1,7 @@
+## 0.3.0
+
+- update RxDart to `0.21.0`;
+
 ## 0.2.0
 
 - ***Breaking Change***

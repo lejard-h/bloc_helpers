@@ -15,7 +15,7 @@ mixin _AsyncMixin<Parameter, Result> {
   final _resultPublisher = PublishSubject<Result>();
 
   // ignore: close_sinks
-  final _runningBehavior = BehaviorSubject<bool>(seedValue: false);
+  final _runningBehavior = BehaviorSubject<bool>.seeded(false);
 
   /// Sink to start the task
   /// the result and errors are push in the [onResult] stream
@@ -156,7 +156,7 @@ abstract class AsyncCachedTaskBloc<Parameter, Result>
     with _CachedAsyncMixin<Parameter, Result> {
   /// [seedValue] will init the value of the [cachedResult]
   AsyncCachedTaskBloc({Result seedValue})
-      : _cachedResultBehavior = BehaviorSubject<Result>(seedValue: seedValue),
+      : _cachedResultBehavior = BehaviorSubject<Result>.seeded(seedValue),
         super() {
     onResult.listen(_onResult, onError: _onError);
     _invalidatePublisher.stream.listen((value) {
