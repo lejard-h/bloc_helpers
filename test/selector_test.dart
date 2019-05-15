@@ -5,8 +5,8 @@ import 'package:bloc_helpers/bloc_helpers.dart';
 
 void main() {
   group('selector bloc not unique', () {
-    SelectorBloc _initBloc() => SelectorBloc<String>(
-          seedValue: ['foo', 'foo', 'bar'],
+    SelectorBloc _initBloc() => SelectorBloc<String>.seeded(
+          ['foo', 'foo', 'bar'],
         );
 
     test('seed', () async {
@@ -106,8 +106,9 @@ void main() {
   });
 
   group('selector bloc unique', () {
-    SelectorBloc _initBloc() => SelectorBloc<String>.unique(
-          seedValue: Set.from(['foo', 'foo', 'bar']),
+    SelectorBloc _initBloc() => SelectorBloc<String>.seeded(
+          Set.from(['foo', 'foo', 'bar']),
+          unique: true,
         );
 
     test('seed', () async {
@@ -119,7 +120,7 @@ void main() {
     });
 
     test('select', () async {
-      final bloc = SelectorBloc<String>.unique();
+      final bloc = SelectorBloc<String>(unique: true);
 
       scheduleMicrotask(() {
         bloc.selectSink.add('foo');

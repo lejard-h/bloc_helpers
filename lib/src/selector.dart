@@ -7,9 +7,7 @@ import 'bloc.dart';
 ///
 /// Unique value selector
 /// ```dart
-/// final selector = new SelectorBloc<String>();
-///
-/// selector.selected.first; // []
+/// final selector = new SelectorBloc<String>(seedValue);
 ///
 /// selector.selectSink.add('foo'); // ['foo']
 /// selector.selectSink.add('foo'); // ['foo']
@@ -41,17 +39,19 @@ class SelectorBloc<T> extends Bloc {
   final _unselectAllPublisher = PublishSubject<Iterable<T>>();
   final _clearPublisher = PublishSubject<void>();
 
-  SelectorBloc({List<T> seedValue})
-      : unique = false,
-        _selectedBehavior =
-            BehaviorSubject<List<T>>.seeded(seedValue ?? <T>[]) {
+  SelectorBloc({
+    this.unique = false,
+  }) : _selectedBehavior =
+            unique ? BehaviorSubject<Set<T>>() : BehaviorSubject<List<T>>() {
     _initListeners();
   }
 
-  SelectorBloc.unique({Set<T> seedValue})
-      : unique = true,
-        _selectedBehavior =
-            BehaviorSubject<Set<T>>.seeded(seedValue ?? Set<T>()) {
+  SelectorBloc.seeded(
+    Iterable<T> seedValue, {
+    this.unique = false,
+  }) : _selectedBehavior = unique
+            ? BehaviorSubject<Set<T>>.seeded(seedValue.toSet())
+            : BehaviorSubject<List<T>>.seeded(seedValue.toList()) {
     _initListeners();
   }
 
